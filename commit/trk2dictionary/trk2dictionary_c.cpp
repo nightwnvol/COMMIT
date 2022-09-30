@@ -60,6 +60,7 @@ std::vector< Vector<double> >   P;
 Vector<int>     dim;
 Vector<float>   pixdim;
 float*          ptrMASK;
+float*          ptrISO;
 float           fiberShiftXmm, fiberShiftYmm, fiberShiftZmm;
 bool            doIntersect;
 float           minSegLen, minFiberLen, maxFiberLen;
@@ -78,7 +79,7 @@ int trk2dictionary(
     char* str_filename, int data_offset, int Nx, int Ny, int Nz, float Px, float Py, float Pz, int n_count, int n_scalars, int n_properties,
     float fiber_shiftX, float fiber_shiftY, float fiber_shiftZ, float min_seg_len, float min_fiber_len, float max_fiber_len,
     float* ptrPEAKS, int Np, float vf_THR, int ECix, int ECiy, int ECiz,
-    float* _ptrMASK, float* ptrISO,, float* ptrTDI, char* path_out, int c, double* ptrPeaksAffine,
+    float* _ptrMASK, float* _ptrISO, float* ptrTDI, char* path_out, int c, double* ptrPeaksAffine,
     int nReplicas, double* ptrBlurRho, double* ptrBlurAngle, double* ptrBlurWeights, bool* ptrBlurApplyTo,
     float* ptrToVOXMM, unsigned short ndirs, short* ptrHashTable
 )
@@ -121,6 +122,7 @@ int trk2dictionary(
     fiberShiftYmm = fiber_shiftY * pixdim.y;
     fiberShiftZmm = fiber_shiftZ * pixdim.z;
     ptrMASK       = _ptrMASK;
+    ptrISO        = _ptrISO;
     doIntersect   = c > 0;
     minSegLen     = min_seg_len;
     minFiberLen   = min_fiber_len;
@@ -331,7 +333,7 @@ int trk2dictionary(
     fclose( pDict_ISO_v );
 
 
-    printf("     [ %d voxels, %d segments ]\n", totISOVoxels );
+    printf("     [ %d voxels ]\n", totISOVoxels );
 
     return 1;
 }

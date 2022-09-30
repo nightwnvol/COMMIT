@@ -21,7 +21,7 @@ cdef extern from "trk2dictionary_c.cpp":
         char* filename_tractogram, int data_offset, int Nx, int Ny, int Nz, float Px, float Py, float Pz, int n_count, int n_scalars,
         int n_properties, float fiber_shiftX, float fiber_shiftY, float fiber_shiftZ, float min_seg_len, float min_fiber_len,  float max_fiber_len,
         float* ptrPEAKS, int Np, float vf_THR, int ECix, int ECiy, int ECiz,
-        float* _ptrMASK, float* ptrTDI, char* path_out, int c, double* ptrPeaksAffine,
+        float* _ptrMASK, float* _ptrISO, float* ptrTDI, char* path_out, int c, double* ptrPeaksAffine,
         int nReplicas, double* ptrBlurRho, double* ptrBlurAngle, double* ptrBlurWeights, bool* ptrBlurApplyTo,
         float* ptrTractsAffine, unsigned short ndirs, short* prtHashTable
     ) nogil
@@ -32,7 +32,7 @@ def _get_header( niiFILE ):
 def _get_affine( niiFILE ):
     return niiFILE.affine if nibabel.__version__ >= '2.0.0' else niiFILE.get_affine()
 
-cpdef run( filename_tractogram=None, path_out=None, filename_peaks=None, filename_mask=None, do_intersect=True,
+cpdef run( filename_tractogram=None, path_out=None, filename_peaks=None, filename_mask=None, filename_ISO=None, do_intersect=True,
     fiber_shift=0, min_seg_len=1e-3, min_fiber_len=0.0, max_fiber_len=250.0,
     vf_THR=0.1, peaks_use_affine=False, flip_peaks=[False,False,False],
     blur_spacing=0.25, blur_core_extent=0.0, blur_gauss_extent=0.0, blur_gauss_min=0.1, blur_apply_to=None,
@@ -335,6 +335,24 @@ cpdef run( filename_tractogram=None, path_out=None, filename_peaks=None, filenam
         print( '\t- No mask specified to filter IC compartments' )
         ptrMASK = NULL
 
+    # ISO map 
+    cdef float* ptrISO
+    cdef float [:, :, ::1] niiISO_img
+    if filename_ISO is not None :
+        print( '\t- Restricted ISO map' )
+        niiISO = nibabel.load( filename_ISO )
+        niiISO_hdr = _get_header( niiISO )
+        print( f'\t\t- {niiISO.shape[0]} x {niiISO.shape[1]} x {niiISO.shape[2]}' )
+        print( f'\t\t- {niiISO_hdr["pixdim"][1]:.4f} x {niiISO_hdr["pixdim"][2]:.4f} x {niiISO_hdr["pixdim"][3]:.4f}' )
+        if ( Nx!=niiISO.shape[0] or Ny!=niiISO.shape[1] or Nz!=niiISO.shape[2] or
+            abs(Px-niiISO_hdr['pixdim'][1])>1e-3 or abs(Py-niiISO_hdr['pixdim'][2])>1e-3 or abs(Pz-niiISO_hdr['pixdim'][3])>1e-3 ) :
+            WARNING( 'Dataset does not have the same geometry as the tractogram' )
+        niiISO_img = np.ascontiguousarray( np.asanyarray( niiISO.dataobj ).astype(np.float32) )
+        ptrISO  = &niiISO_img[0,0,0]
+    else :
+        print( '\t- No ISO map specified, using the whole white-matter t' )
+        ptrISO = &niiMASK_img[0,0,0]
+
     # peaks file for EC contributions
     cdef float* ptrPEAKS
     cdef float [:, :, :, ::1] niiPEAKS_img
@@ -406,7 +424,7 @@ cpdef run( filename_tractogram=None, path_out=None, filename_peaks=None, filenam
         Nx, Ny, Nz, Px, Py, Pz, n_count, n_scalars, n_properties,
         fiber_shiftX, fiber_shiftY, fiber_shiftZ, min_seg_len, min_fiber_len, max_fiber_len,
         ptrPEAKS, Np, vf_THR, -1 if flip_peaks[0] else 1, -1 if flip_peaks[1] else 1, -1 if flip_peaks[2] else 1,
-        ptrMASK, ptrTDI, path_out, 1 if do_intersect else 0, ptrPeaksAffine,
+        ptrMASK, ptrISO, ptrTDI, path_out, 1 if do_intersect else 0, ptrPeaksAffine,
         nReplicas, &blurRho[0], &blurAngle[0], &blurWeights[0], &blurApplyTo[0], ptrToVOXMM, ndirs, ptrHashTable  );
     if ret == 0 :
         WARNING( 'DICTIONARY not generated' )
