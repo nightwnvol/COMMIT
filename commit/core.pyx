@@ -470,7 +470,7 @@ cdef class Evaluation :
         sys.stdout.flush()
 
         # self.DICTIONARY['ISO'] = {}
-        if self.DICTIONARY['ISO']['nV'] < self.DICTIONARY['MASK'].sum() 
+        if self.DICTIONARY['ISO']['nV'] < self.DICTIONARY['MASK'].sum(): 
             self.DICTIONARY['nV'] = self.DICTIONARY['MASK'].sum()
         else:
             self.DICTIONARY['nV'] = self.DICTIONARY['ISO']['nV']
