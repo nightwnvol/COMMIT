@@ -423,10 +423,10 @@ cdef class Evaluation :
 
         self.DICTIONARY['ISO'] = {}
         self.DICTIONARY['ISO']['v']    = np.fromfile( pjoin(self.get_config('TRACKING_path'),'dictionary_ISO_v.dict'), dtype=np.uint32 )
-        if self.DICTIONARY['ISO']['nV'] > 0:
+        if self.DICTIONARY['ISO']['v'].size > 0:
             self.DICTIONARY['nV']          = self.DICTIONARY['ISO']['v'].size
         else:
-            self.DICTIONARY['nV'] = self.DICTIONARY['MASK'].sum()
+            self.DICTIONARY['nV']      = self.DICTIONARY['MASK'].sum()
 
         # reorder the segments based on the "v" field
         idx = np.argsort( self.DICTIONARY['IC']['v'], kind='mergesort' )
