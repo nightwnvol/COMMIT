@@ -421,6 +421,10 @@ cdef class Evaluation :
         self.DICTIONARY['IC']['n']     = self.DICTIONARY['IC']['fiber'].size
         self.DICTIONARY['IC']['nF']    = self.DICTIONARY['TRK']['norm'].size
 
+        self.DICTIONARY['ISO'] = {}
+        self.DICTIONARY['ISO']['v']    = np.fromfile( pjoin(self.get_config('TRACKING_path'),'dictionary_ISO_v.dict'), dtype=np.uint32 )
+        self.DICTIONARY['nV']          = self.DICTIONARY['ISO']['v'].size
+
         # reorder the segments based on the "v" field
         idx = np.argsort( self.DICTIONARY['IC']['v'], kind='mergesort' )
         self.DICTIONARY['IC']['v']     = self.DICTIONARY['IC']['v'][ idx ]
@@ -465,16 +469,16 @@ cdef class Evaluation :
         print( '\t* Isotropic contributions...  ', end='' )
         sys.stdout.flush()
 
-        self.DICTIONARY['ISO'] = {}
+        # self.DICTIONARY['ISO'] = {}
 
         self.DICTIONARY['nV'] = self.DICTIONARY['MASK'].sum()
 
-        vx, vy, vz = ( self.DICTIONARY['MASK'] > 0 ).nonzero() # [TODO] find a way to avoid using int64 (not necessary and waste of memory)
-        vx = vx.astype(np.int32)
-        vy = vy.astype(np.int32)
-        vz = vz.astype(np.int32)
-        self.DICTIONARY['ISO']['v'] = vx + self.get_config('dim')[0] * ( vy + self.get_config('dim')[1] * vz )
-        del vx, vy, vz
+        # vx, vy, vz = ( self.DICTIONARY['MASK'] > 0 ).nonzero() # [TODO] find a way to avoid using int64 (not necessary and waste of memory)
+        # vx = vx.astype(np.int32)
+        # vy = vy.astype(np.int32)
+        # vz = vz.astype(np.int32)
+        # self.DICTIONARY['ISO']['v'] = vx + self.get_config('dim')[0] * ( vy + self.get_config('dim')[1] * vz )
+        # del vx, vy, vz
 
         # reorder the segments based on the "v" field
         idx = np.argsort( self.DICTIONARY['ISO']['v'], kind='mergesort' )
