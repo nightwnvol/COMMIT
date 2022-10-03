@@ -470,8 +470,10 @@ cdef class Evaluation :
         sys.stdout.flush()
 
         # self.DICTIONARY['ISO'] = {}
-
-        self.DICTIONARY['nV'] = self.DICTIONARY['MASK'].sum()
+        if self.DICTIONARY['ISO']['nV'] < self.DICTIONARY['MASK'].sum() 
+            self.DICTIONARY['nV'] = self.DICTIONARY['MASK'].sum()
+        else:
+            self.DICTIONARY['nV'] = self.DICTIONARY['ISO']['nV']
 
         # vx, vy, vz = ( self.DICTIONARY['MASK'] > 0 ).nonzero() # [TODO] find a way to avoid using int64 (not necessary and waste of memory)
         # vx = vx.astype(np.int32)
