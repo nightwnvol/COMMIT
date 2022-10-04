@@ -302,8 +302,6 @@ int trk2dictionary(
 
     printf("     [ %d voxels, %d segments ]\n", totECVoxels, totECSegments );
 
-    return 1;
-
 
     /*=========================*/
     /*     Restricted ISO compartments     */

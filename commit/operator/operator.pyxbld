@@ -20,10 +20,10 @@ def make_ext(modname, pyxfilename):
         raise RuntimeError('config.nISO must be in the range [0..20]')
 
     # Force recompilation
-    if config.model == "VolumeFractions":
-        filename = "operator_noLUT.c"
-    else:
-        filename = "operator_withLUT.c"
+    #if config.model == "VolumeFractions":
+    #    filename = "operator_noLUT.c"
+    #else:
+    filename = "operator_withLUT.c"
     path = dirname(pyxfilename)
 
     if config.build_dir is None:
