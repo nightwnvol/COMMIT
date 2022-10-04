@@ -321,7 +321,7 @@ int trk2dictionary(
         for(ix=0; ix<dim.x ;ix++){
             // check if in mask previously computed from IC segments
             if ( ptrMASK[ iz + dim.z * ( iy + dim.y * ix ) ] == 0 ) continue;
-    
+            if ( ptrISO[ iz + dim.z * ( iy + dim.y * ix ) ] == 0 ) continue;
             v = ix + dim.x * ( iy + dim.y * iz );
             fwrite( &v, 4, 1, pDict_ISO_v );    
             totISOVoxels++; 
