@@ -579,6 +579,7 @@ cdef class Evaluation :
             self.THREADS['ISO'] = np.zeros( n+1, dtype=np.uint32 )
             for i in xrange(n) :
                 self.THREADS['ISO'][i] = np.searchsorted( self.DICTIONARY['ISO']['v'], self.DICTIONARY['IC']['v'][ self.THREADS['IC'][i] ] )
+                print(self.THREADS['ISO'][i])
             self.THREADS['ISO'][n] = self.DICTIONARY['ISO']['nV']
 
             # check if some threads are not assigned any segment
