@@ -1052,7 +1052,8 @@ cdef class Evaluation :
         niiISO_img = np.zeros( self.get_config('dim'), dtype=np.float32 )
         if len(self.KERNELS['iso']) > 0 :
             offset = nF * self.KERNELS['wmr'].shape[0] + nE * self.KERNELS['wmh'].shape[0]
-            tmp = x[offset:].reshape( (-1,self.DICTIONARY['ISO']['nV']) ).sum( axis=0 )
+            offset_iso = offset + self.DICTIONARY['ISO']['nV']
+            tmp = x[offset:offset_iso].sum( axis=0 )
             xv = np.bincount( self.DICTIONARY['ISO']['v'], weights=tmp, minlength=nV ).astype(np.float32)
             niiISO_img[ self.DICTIONARY['MASK_ix'], self.DICTIONARY['MASK_iy'], self.DICTIONARY['MASK_iz'] ] = xv
         print( '   [ OK ]' )
