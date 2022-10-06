@@ -492,8 +492,8 @@ cdef class Evaluation :
         lut = np.zeros( self.get_config('dim'), dtype=np.uint32 ).ravel()
         for i in xrange(idx.size) :
             lut[ idx[i] ] = i
-        self.DICTIONARY['IC'][ 'v'] = lut[ self.DICTIONARY['IC'][ 'v'] ]
-        self.DICTIONARY['EC'][ 'v'] = lut[ self.DICTIONARY['EC'][ 'v'] ]
+        self.DICTIONARY['IC']['v'] = lut[ self.DICTIONARY['IC'][ 'v'] ]
+        self.DICTIONARY['EC']['v'] = lut[ self.DICTIONARY['EC'][ 'v'] ]
         self.DICTIONARY['ISO']['v'] = lut[ self.DICTIONARY['ISO']['v'] ]
 
         print( '[ OK ]' )
@@ -581,7 +581,7 @@ cdef class Evaluation :
             for i in xrange(n) :
                 self.THREADS['ISO'][i] = np.searchsorted( self.DICTIONARY['ISO']['v'], self.DICTIONARY['IC']['v'][ self.THREADS['IC'][i] ] )
                 print(self.DICTIONARY['IC']['v'][ self.THREADS['IC'][i] ])
-            self.THREADS['ISO'][n] = self.DICTIONARY['ISO']['nV']
+            self.THREADS['ISO'][n] = self.DICTIONARY['nV']
 
             # check if some threads are not assigned any segment
             if np.count_nonzero( np.diff( self.THREADS['ISO'].astype(np.int32) ) <= 0 ) :
